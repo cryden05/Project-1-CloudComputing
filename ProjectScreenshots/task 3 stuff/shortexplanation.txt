@@ -1,0 +1,5 @@
+How we simulated cloud storage with Azurite and a local "serverless function"
+
+We used Azurite which is a Blob Emulator in Docker to properly simulate Azure Storage. Storage explorer uploaded the All_diets.csv to
+container "datasets". A Python "serverless style" function used the Azure Blob SDK to read the CSV, then computed average macros
+per diet type, and saved those results to a JSON file, as a simulated NoSQL storage. 
