@@ -37,6 +37,7 @@ plt.ylabel('Average Protein (g)')
 plt.xticks(rotation=45)
 plt.tight_layout()
 plt.savefig("outputs/avg_protein_by_diet.png")
+plt.show()
 plt.close()
 
 # Heatmap showing the relationship between macronutrients and diet types
@@ -47,6 +48,7 @@ plt.ylabel('Diet Type')
 plt.xlabel('Macronutrients')
 plt.tight_layout()
 plt.savefig("outputs/macros_heatmap.png")
+plt.show()
 plt.close()
 
 # Scatter plot to display the top 5 protein-rich recipes
@@ -58,6 +60,7 @@ plt.xlabel('Protein(g)')
 plt.legend(title='Cuisine', bbox_to_anchor=(1.05, 1), loc='upper left')
 plt.tight_layout()
 plt.savefig("outputs/top5_protein_scatter.png")
+plt.show()
 plt.close()
 
 print("Nutrition analysis complete.")
