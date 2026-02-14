@@ -1,11 +1,24 @@
+import os
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import os
+
+# -----------------------------
+# Enhancement #2: Env-based config
+# -----------------------------
+DATASET_PATH = os.environ.get("DATASET_PATH", "All_Diets.csv")
+OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "outputs")
 
 print("Nutrition analysis started...")
+print(f"Using dataset: {DATASET_PATH}")
+print(f"Saving outputs to: {OUTPUT_DIR}")
 
-df = pd.read_csv('All_Diets.csv')
+# Create output directory (Enhancement #1: persisted artifacts)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# Load data
+df = pd.read_csv(DATASET_PATH)
+
 nutrition_cols = ['Protein(g)', 'Carbs(g)', 'Fat(g)']
 
 # Handle missing data (fill missing values with mean)
@@ -22,36 +35,39 @@ top_protein = (
       .sort_values(['Diet_type', 'Protein(g)'], ascending=[True, False])
 )
 
-# Add new metrics (Protein-to-Carbs ratio and Carbs-to-Fat ratio)
+# Add new metrics
 df['Protein_to_Carbs_ratio'] = df['Protein(g)'] / df['Carbs(g)']
 df['Carbs_to_Fat_ratio'] = df['Carbs(g)'] / df['Fat(g)']
 
-# Create output folder for charts
-os.makedirs("outputs", exist_ok=True)
+# -----------------------------
+# Enhancement #1: Headless outputs (savefig instead of show)
+# -----------------------------
 
-# Bar chart for average macronutrients
+# 1) Bar chart for average protein by diet type
 plt.figure(figsize=(10, 6))
 sns.barplot(x=avg_macros.index, y=avg_macros['Protein(g)'])
 plt.title('Average Protein by Diet Type')
 plt.ylabel('Average Protein (g)')
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.savefig("outputs/avg_protein_by_diet.png")
-plt.show()
+
+bar_path = os.path.join(OUTPUT_DIR, "avg_protein_by_diet.png")
+plt.savefig(bar_path, dpi=200)
 plt.close()
 
-# Heatmap showing the relationship between macronutrients and diet types
+# 2) Heatmap for macronutrient content by diet type
 plt.figure(figsize=(8, 6))
 sns.heatmap(avg_macros, annot=True, fmt=".1f")
 plt.title('Macronutrient Content by Diet Type')
 plt.ylabel('Diet Type')
 plt.xlabel('Macronutrients')
 plt.tight_layout()
-plt.savefig("outputs/macros_heatmap.png")
-plt.show()
+
+heatmap_path = os.path.join(OUTPUT_DIR, "macros_heatmap.png")
+plt.savefig(heatmap_path, dpi=200)
 plt.close()
 
-# Scatter plot to display the top 5 protein-rich recipes
+# 3) Scatter plot for top 5 protein-rich recipes
 plt.figure(figsize=(10, 6))
 sns.scatterplot(data=top_protein, x='Protein(g)', y='Recipe_name', hue='Cuisine_type')
 plt.title('Top 5 Protein Rich Recipes Across Cuisines')
@@ -59,17 +75,17 @@ plt.ylabel('Recipe Name')
 plt.xlabel('Protein(g)')
 plt.legend(title='Cuisine', bbox_to_anchor=(1.05, 1), loc='upper left')
 plt.tight_layout()
-plt.savefig("outputs/top5_protein_scatter.png")
-plt.show()
+
+# Save scatter plot
+scatter_path = os.path.join(OUTPUT_DIR, "top5_protein_scatter.png")
+plt.savefig(scatter_path, dpi=200)
 plt.close()
 
+# Console proof for screenshots
 print("Nutrition analysis complete.")
-print("Saved charts to outputs/:")
-print("- outputs/avg_protein_by_diet.png")
-print("- outputs/macros_heatmap.png")
-print("- outputs/top5_protein_scatter.png")
-
-print("\nAverage macros (first few rows):")
+print("Saved charts:")
+print(f"- {bar_path}")
+print(f"- {heatmap_path}")
+print(f"- {scatter_path}")
+print("\nAverage macros (preview):")
 print(avg_macros.head())
-
-#Comment Code to test Pipeline V9
